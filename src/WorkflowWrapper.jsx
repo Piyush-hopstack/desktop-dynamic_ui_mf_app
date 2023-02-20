@@ -1,13 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import Workflow from "./components/Workflow";
-import { WorkflowHandlerProvider } from "./contexts/WorkflowHandlerContext";
+import { WorkflowHandler } from "./contexts/WorkflowHandlerContext";
+import WorkflowSelection from "./pages/WorkflowSelection";
 
 const WorkflowWrapper = () => {
-  return (
-    <WorkflowHandlerProvider>
-      <Workflow />
-    </WorkflowHandlerProvider>
-  );
+  const { selectedWorkflow } = useContext(WorkflowHandler);
+
+  return <>{!selectedWorkflow ? <WorkflowSelection /> : <Workflow />}</>;
 };
 
 export default WorkflowWrapper;

@@ -9,11 +9,6 @@ const Workflow = () => {
   const { currentNode, changeNode, validateInput, validated } =
     useContext(WorkflowHandler);
 
-  useEffect(() => {
-    const firstNode = json.trigger.start[0].next;
-    changeNode(firstNode);
-  }, []);
-
   function getComponents(type, value) {
     switch (type) {
       case "userInputs":
@@ -40,19 +35,19 @@ const Workflow = () => {
       case "onCancel":
         return (
           <EventButton
-            key={value + Math.random() * 10}
+            key={value.next + Math.random() * 10}
             changeNode={changeNode}
-            node={value}
+            node={value.next}
             title={"Cancel"}
           />
         );
       case "onConfirm":
         return (
           <EventButton
-            key={value + Math.random() * 10}
+            key={value.next + Math.random() * 10}
             validated={currentNode.skippable ?? validated}
             changeNode={changeNode}
-            node={value}
+            node={value.next}
             title={"Confirm"}
           />
         );
@@ -62,12 +57,13 @@ const Workflow = () => {
   }
 
   function populateComponents(object, components = [], key = "") {
+    console.log(object, "object");
     if (!object) return;
     if (Array.isArray(object)) {
       components.push(getComponents(key, object));
     } else
       Object.keys(object).forEach((key) => {
-        if (typeof object[key] == "object")
+        if (typeof object[key] == "object" && !(key == "onCancel" || key=="onConfirm"))
           populateComponents(object[key], components, key);
         else components.push(getComponents(key, object[key]));
       });
@@ -76,9 +72,7 @@ const Workflow = () => {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <div>{json.activity}</div>
-
-      {currentNode["stage"]}
+      <div>{currentNode.activity}</div>
       {populateComponents(currentNode, [])}
     </div>
   );
